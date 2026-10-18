@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ESEC SIMS | Secure Access</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Cinematic background -->
+    <div class="scene">
+
+        <div class="ambient ambient-one"></div>
+        <div class="ambient ambient-two"></div>
+
+        <!-- Large glowing orbital rings -->
+        <div class="orbit orbit-one"></div>
+        <div class="orbit orbit-two"></div>
+        <div class="orbit orbit-three"></div>
+
+        <!-- Light streak -->
+        <div class="energy-arc"></div>
+        <div class="energy-glow"></div>
+
+        <!-- Particles -->
+        <div class="particles" id="particles"></div>
+
+        <!-- Floating geometry -->
+        <div class="cube cube-one">
+            <div class="cube-face front"></div>
+            <div class="cube-face back"></div>
+            <div class="cube-face left"></div>
+            <div class="cube-face right"></div>
+            <div class="cube-face top"></div>
+            <div class="cube-face bottom"></div>
+        </div>
+
+        <div class="cube cube-two">
+            <div class="cube-face front"></div>
+            <div class="cube-face back"></div>
+            <div class="cube-face left"></div>
+            <div class="cube-face right"></div>
+            <div class="cube-face top"></div>
+            <div class="cube-face bottom"></div>
+        </div>
+
+        <!-- Top navigation (Academic and ESEC removed from center) -->
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-mark">E</div>
+                <div class="brand-text">
+                    <span>ESEC</span>
+                    <small>SIMS</small>
+                </div>
+            </div>
+
+            <div class="status">
+                <span class="status-dot"></span>
+                SYSTEM ONLINE
+            </div>
+        </header>
+
+        <!-- Main interactive hero area -->
+        <main class="hero" id="heroMain">
+
+            <!-- STEP 1: Hero Introduction screen with LET'S START button -->
+            <section class="hero-copy" id="heroCopy">
+
+                <div class="eyebrow">
+                    <span class="eyebrow-dot"></span>
+                    ERODE SENGUNTHAR ENGINEERING COLLEGE
+                </div>
+
+                <h1>
+                    Student Information
+                    <br>
+                    <span class="sims-italic-title">Management <span class="clean-system">System</span></span>
+                </h1>
+
+                <p>
+                    A centralized academic platform designed to
+                    manage, analyze and visualize student information
+                    with clarity, security and precision.
+                </p>
+
+                <div class="hero-actions">
+                    <button class="hero-button" id="startBtn" type="button">
+                        <span>LET'S START</span>
+                        <span class="hero-button-arrow">→</span>
+                    </button>
+
+                    <div class="hero-note">
+                        Secure academic management
+                    </div>
+                </div>
+
+                <div class="trust-row">
+                    <div class="trust-item">
+                        <strong>01</strong>
+                        <span>STUDENT</span>
+                    </div>
+
+                    <div class="trust-line"></div>
+
+                    <div class="trust-item">
+                        <strong>02</strong>
+                        <span>STAFF</span>
+                    </div>
+
+                    <div class="trust-line"></div>
+
+                    <div class="trust-item">
+                        <strong>03</strong>
+                        <span>ADMIN</span>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- STEP 2: Centered Welcome Back login card (revealed on LET'S START) -->
+            <section class="login-wrapper" id="loginCard">
+
+                <div class="login-glow"></div>
+
+                <div class="login-card">
+
+                    <button type="button" class="back-link" id="backBtn">
+                        ← Back to overview
+                    </button>
+
+                    <div class="card-top">
+                        <div>
+                            <span class="small-label">WELCOME BACK</span>
+                            <h2>Secure Access</h2>
+                        </div>
+
+                        <div class="lock-icon">
+                            <span>⌁</span>
+                        </div>
+                    </div>
+
+                    <!-- Role -->
+                    <div class="field">
+                        <label>ACCESS LEVEL</label>
+                        <div class="select-box">
+                            <select id="role">
+                                <option value="Student">Student</option>
+                                <option value="Staff">Staff</option>
+                                <option value="Administrator">Administrator</option>
+                            </select>
+                            <span class="arrow">⌄</span>
+                        </div>
+                    </div>
+
+                    <!-- ID -->
+                    <div class="field">
+                        <label id="idLabel">ROLL NUMBER</label>
+                        <div class="input-box">
+                            <span class="input-icon">◈</span>
+                            <input
+                                id="userId"
+                                type="text"
+                                placeholder="Enter your roll number"
+                                autocomplete="off"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Password / mobile (eye toggle only - no duplicate sign-in option) -->
+                    <div class="field">
+                        <label id="passwordLabel">REGISTERED MOBILE</label>
+                        <div class="input-box">
+                            <span class="input-icon">◇</span>
+                            <input
+                                id="password"
+                                type="password"
+                                placeholder="Enter registered mobile"
+                                autocomplete="current-password"
+                            >
+                            <button
+                                type="button"
+                                class="eye"
+                                id="showPassword"
+                                tabindex="-1"
+                                title="Toggle password visibility"
+                                aria-label="Toggle password visibility"
+                            >○</button>
+                        </div>
+                    </div>
+
+                    <div class="login-options">
+                        <label class="remember">
+                            <input type="checkbox">
+                            <span></span>
+                            Remember me
+                        </label>
+                        <a href="#">Need help?</a>
+                    </div>
+
+                    <!-- Inline error container (clears browser popups) -->
+                    <div id="loginError" class="login-error" style="display:none;"></div>
+
+                    <!-- Single Sign-In Button -->
+                    <button class="login-button" id="loginButton" type="button">
+                        <span class="button-text">SIGN IN</span>
+                        <span class="button-arrow">→</span>
+                    </button>
+
+                    <div class="security-note">
+                        <span class="shield">◆</span>
+                        Protected by ESEC secure authentication
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+        <!-- Bottom information -->
+        <footer>
+            <div>
+                <span class="footer-line"></span>
+                <span>ACADEMIC MANAGEMENT SYSTEM</span>
+            </div>
+            <span>© 2026 ESEC • CSE</span>
+        </footer>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>

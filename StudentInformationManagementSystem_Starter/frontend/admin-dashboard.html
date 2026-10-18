@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ESEC SIMS - Administrator Console</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+    margin:0;
+    min-height:100vh;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:#f4f6f9;
+    color:#1e293b;
+}
+.header{
+    height:64px;
+    background:#ffffff;
+    border-bottom:1px solid #e2e8f0;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 24px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.03);
+}
+.header-brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+.header-brand h1{
+    margin:0;
+    font-size:22px;
+    font-weight:700;
+    color:#0f172a;
+}
+.badge-role{
+    background:#fee2e2;
+    color:#991b1b;
+    font-size:11px;
+    font-weight:700;
+    padding:3px 8px;
+    border-radius:12px;
+    letter-spacing:0.5px;
+}
+.logged{
+    font-size:14px;
+    color:#475569;
+}
+.logged strong{color:#0f172a}
+
+.content{
+    max-width:1300px;
+    margin:24px auto 90px;
+    padding:0 24px;
+}
+
+.metrics-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:16px;
+    margin-bottom:24px;
+}
+.metric-box{
+    background:white;
+    border:1px solid #e2e8f0;
+    border-radius:10px;
+    padding:18px 22px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.02);
+}
+.metric-label{
+    font-size:12px;
+    font-weight:600;
+    color:#64748b;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    margin-bottom:6px;
+}
+.metric-num{
+    font-size:28px;
+    font-weight:700;
+    color:#0f172a;
+}
+
+.card{
+    background:#ffffff;
+    border:1px solid #e2e8f0;
+    border-radius:10px;
+    padding:22px;
+    margin-bottom:20px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.02);
+}
+.card-title{
+    margin:0 0 16px 0;
+    font-size:17px;
+    font-weight:700;
+    color:#0f172a;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:14px;
+    align-items:end;
+}
+.field label{
+    display:block;
+    font-size:12px;
+    font-weight:600;
+    color:#475569;
+    margin-bottom:6px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+}
+.field input{
+    width:100%;
+    height:42px;
+    border:1px solid #cbd5e1;
+    border-radius:6px;
+    padding:8px 12px;
+    font-size:14px;
+    background:#ffffff;
+    color:#0f172a;
+    outline:none;
+}
+.field input:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 0 3px rgba(37,99,235,0.1);
+}
+
+.btn{
+    height:42px;
+    border:none;
+    border-radius:6px;
+    background:#2563eb;
+    color:white;
+    font-size:14px;
+    font-weight:600;
+    padding:0 18px;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    transition:background-color 0.15s ease;
+}
+.btn:hover{background:#1d4ed8}
+.btn-secondary{
+    background:#f1f5f9;
+    color:#334155;
+    border:1px solid #cbd5e1;
+}
+.btn-secondary:hover{background:#e2e8f0}
+.btn-toggle{
+    height:30px;
+    padding:0 12px;
+    font-size:12px;
+    border-radius:4px;
+    background:#0f172a;
+}
+.btn-toggle:hover{background:#334155}
+
+.table-toolbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:14px;
+}
+.table-wrap{
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    overflow:auto;
+    background:#ffffff;
+}
+table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+}
+th,td{
+    border-bottom:1px solid #e2e8f0;
+    padding:12px 16px;
+    text-align:left;
+}
+th{
+    background:#f8fafc;
+    color:#475569;
+    font-weight:600;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+}
+tr:hover td{background:#f8fafc}
+
+.status-pill{
+    display:inline-block;
+    padding:3px 8px;
+    border-radius:12px;
+    font-size:11px;
+    font-weight:700;
+}
+.pill-active{background:#dcfce7;color:#166534}
+.pill-inactive{background:#fee2e2;color:#991b1b}
+
+.bottom{
+    position:fixed;
+    left:0;right:0;bottom:0;
+    height:60px;
+    background:#ffffff;
+    border-top:1px solid #e2e8f0;
+    display:flex;
+    justify-content:flex-end;
+    align-items:center;
+    padding:0 24px;
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+    <div class="header-brand">
+        <h1>ESEC SIMS</h1>
+        <span class="badge-role">ADMINISTRATOR</span>
+    </div>
+    <div class="logged">
+        Logged in: <strong id="adminName">System Administrator</strong>
+        (<span id="adminId">ADM001</span>)
+    </div>
+</header>
+
+<main class="content">
+
+    <!-- System Stats -->
+    <div class="metrics-grid">
+        <div class="metric-box">
+            <div class="metric-label">Total Students</div>
+            <div id="statStudents" class="metric-num">--</div>
+        </div>
+        <div class="metric-box">
+            <div class="metric-label">Faculty / Staff</div>
+            <div id="statStaff" class="metric-num">--</div>
+        </div>
+        <div class="metric-box">
+            <div class="metric-label">Curriculum Subjects</div>
+            <div id="statSubjects" class="metric-num">--</div>
+        </div>
+        <div class="metric-box">
+            <div class="metric-label">Attendance Records</div>
+            <div id="statAttendance" class="metric-num">--</div>
+        </div>
+    </div>
+
+    <!-- Create Staff Account -->
+    <div class="card">
+        <div class="card-title">Create Staff Account</div>
+        <form onsubmit="event.preventDefault(); addStaff();">
+            <div class="form-grid">
+                <div class="field">
+                    <label>Staff ID *</label>
+                    <input id="staffIdInput" placeholder="e.g. STF002" required>
+                </div>
+                <div class="field">
+                    <label>Staff Full Name *</label>
+                    <input id="staffNameInput" placeholder="e.g. Dr. K. Murugan" required>
+                </div>
+                <div class="field">
+                    <label>Initial Password *</label>
+                    <input id="staffPassInput" type="password" placeholder="Temporary password" required>
+                </div>
+                <div>
+                    <button type="submit" class="btn" style="width:100%">+ Create Account</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Staff Accounts List -->
+    <div class="card">
+        <div class="table-toolbar">
+            <div class="card-title" style="margin:0">Faculty & Staff Accounts</div>
+            <button class="btn btn-secondary" onclick="loadStaff()">↻ Refresh</button>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Staff ID</th>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th style="text-align:right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="staffBody">
+                    <tr><td colspan="4" style="text-align:center;padding:30px;color:#94a3b8">Loading staff accounts...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</main>
+
+<footer class="bottom">
+    <button class="btn btn-secondary" onclick="logout()">Log Out</button>
+</footer>
+
+<script>
+const adminName = localStorage.getItem("sims_name") || "Administrator";
+const adminId = localStorage.getItem("sims_id") || "ADM001";
+document.getElementById("adminName").textContent = adminName;
+document.getElementById("adminId").textContent = adminId;
+
+async function loadStats(){
+    try{
+        const res = await fetch("/api/admin/stats");
+        const d = await res.json();
+        if(d.success){
+            document.getElementById("statStudents").textContent = d.totalStudents;
+            document.getElementById("statStaff").textContent = d.totalStaff;
+            document.getElementById("statSubjects").textContent = d.totalSubjects;
+            document.getElementById("statAttendance").textContent = d.totalAttendance;
+        }
+    }catch(ignored){}
+}
+
+async function loadStaff(){
+    const body = document.getElementById("staffBody");
+    body.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:30px;color:#94a3b8">Loading staff accounts...</td></tr>';
+
+    try{
+        const res = await fetch("/api/admin/staff");
+        const d = await res.json();
+        if(!d.success) throw new Error(d.message || "Failed to load staff.");
+
+        body.innerHTML = "";
+        if(!d.staff || d.staff.length === 0){
+            body.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:30px;color:#94a3b8">No staff accounts found.</td></tr>';
+            return;
+        }
+
+        d.staff.forEach(s => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td><strong>${safe(s.staffId)}</strong></td>
+                <td>${safe(s.name)}</td>
+                <td>
+                    <span class="status-pill ${s.active ? 'pill-active' : 'pill-inactive'}">
+                        ${s.active ? 'ACTIVE' : 'INACTIVE'}
+                    </span>
+                </td>
+                <td style="text-align:right">
+                    <button class="btn btn-toggle" onclick="toggleStaff('${safe(s.staffId)}')">
+                        ${s.active ? 'Deactivate' : 'Activate'}
+                    </button>
+                </td>
+            `;
+            body.appendChild(tr);
+        });
+    }catch(err){
+        body.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:30px;color:#dc2626">${safe(err.message)}</td></tr>`;
+    }
+}
+
+async function addStaff(){
+    const staffId = document.getElementById("staffIdInput").value.trim().toUpperCase();
+    const name = document.getElementById("staffNameInput").value.trim();
+    const password = document.getElementById("staffPassInput").value.trim();
+
+    if(!staffId || !name || !password){
+        alert("Fill all fields.");
+        return;
+    }
+
+    try{
+        const res = await fetch("/api/admin/staff", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({staffId, name, password})
+        });
+        const d = await res.json();
+        if(!d.success) throw new Error(d.message || "Failed to create staff account.");
+
+        alert(`Staff account ${staffId} created successfully!`);
+        document.getElementById("staffIdInput").value = "";
+        document.getElementById("staffNameInput").value = "";
+        document.getElementById("staffPassInput").value = "";
+        loadStaff();
+        loadStats();
+    }catch(err){
+        alert("Error: " + err.message);
+    }
+}
+
+async function toggleStaff(staffId){
+    try{
+        const res = await fetch("/api/admin/staff/toggle", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({staffId})
+        });
+        const d = await res.json();
+        if(!d.success) throw new Error(d.message || "Failed to toggle status.");
+        loadStaff();
+    }catch(err){
+        alert("Error: " + err.message);
+    }
+}
+
+function safe(v){
+    return String(v ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+}
+
+function logout(){
+    localStorage.removeItem("sims_name");
+    localStorage.removeItem("sims_role");
+    localStorage.removeItem("sims_id");
+    window.location.href = "/";
+}
+
+loadStats();
+loadStaff();
+</script>
+
+</body>
+</html>

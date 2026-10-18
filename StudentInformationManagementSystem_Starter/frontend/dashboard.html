@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ESEC SIMS | Student Dashboard</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+    margin:0;
+    min-height:100vh;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:#f4f6f9;
+    color:#1e293b;
+}
+
+/* ── Header ── */
+.header{
+    height:64px;
+    background:#ffffff;
+    border-bottom:1px solid #e2e8f0;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 24px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.03);
+}
+.header-brand{display:flex;align-items:center;gap:10px}
+.header-brand h1{margin:0;font-size:22px;font-weight:700;color:#0f172a}
+.badge-role{
+    background:#e0f2fe;
+    color:#0369a1;
+    font-size:11px;font-weight:700;
+    padding:3px 8px;border-radius:12px;letter-spacing:0.5px;
+}
+.logged{font-size:14px;color:#475569}
+.logged strong{color:#0f172a}
+.btn-logout{
+    border:1px solid #e2e8f0;
+    background:#ffffff;
+    color:#475569;
+    padding:8px 18px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
+    font-size:13px;
+    transition:all 0.2s ease;
+}
+.btn-logout:hover{background:#f1f5f9;color:#0f172a;border-color:#cbd5e1}
+
+/* ── Welcome banner ── */
+.welcome-bar{
+    background:linear-gradient(135deg,#1e40af 0%,#0369a1 100%);
+    color:#ffffff;
+    padding:22px 24px;
+}
+.welcome-bar h2{margin:0 0 4px 0;font-size:26px;font-weight:700}
+.welcome-bar p{margin:0;font-size:14px;opacity:0.8}
+
+/* ── Metrics row ── */
+.metrics-row{
+    display:flex;
+    gap:16px;
+    padding:20px 24px;
+    background:#ffffff;
+    border-bottom:1px solid #e2e8f0;
+    overflow-x:auto;
+}
+.metric-card{
+    flex:1;
+    min-width:160px;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:10px;
+    padding:14px 18px;
+}
+.metric-label{
+    font-size:11px;font-weight:700;
+    color:#64748b;letter-spacing:1px;
+    text-transform:uppercase;
+    margin-bottom:6px;
+}
+.metric-value{
+    font-size:28px;font-weight:700;color:#0f172a;
+}
+.metric-value.good{color:#16a34a}
+.metric-value.warn{color:#dc2626}
+
+/* ── Tabs ── */
+.tabs{
+    background:#ffffff;
+    border-bottom:1px solid #e2e8f0;
+    display:flex;
+    padding:0 20px;
+    gap:4px;
+}
+.tab{
+    border:none;
+    border-bottom:3px solid transparent;
+    background:transparent;
+    padding:13px 20px;
+    cursor:pointer;
+    font-size:14px;font-weight:600;
+    color:#64748b;
+    transition:all 0.2s ease;
+    white-space:nowrap;
+}
+.tab:hover{color:#2563eb}
+.tab.active{color:#2563eb;border-bottom-color:#2563eb}
+
+/* ── Content ── */
+.content{
+    max-width:1200px;
+    margin:24px auto 60px;
+    padding:0 24px;
+}
+.panel{display:none}
+.panel.active{display:block}
+
+/* ── Generic card ── */
+.card{
+    background:#ffffff;
+    border:1px solid #e2e8f0;
+    border-radius:10px;
+    padding:24px;
+    margin-bottom:20px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.02);
+}
+.card-title{
+    margin:0 0 18px 0;
+    font-size:17px;font-weight:700;color:#0f172a;
+    display:flex;align-items:center;justify-content:space-between;
+}
+
+/* ── Profile tab ── */
+.profile-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:0;
+}
+@media(max-width:700px){.profile-grid{grid-template-columns:1fr}}
+
+.data-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 0;
+    border-bottom:1px solid #f1f5f9;
+    font-size:14px;
+}
+.data-row:last-child{border-bottom:none}
+.data-label{color:#64748b;font-weight:500}
+.data-value{color:#0f172a;font-weight:600}
+
+.profile-input{
+    height:36px;
+    border:1px solid #cbd5e1;
+    border-radius:6px;
+    padding:6px 10px;
+    font-size:13px;
+    background:#f8fafc;
+    color:#0f172a;
+    width:200px;
+    text-align:right;
+    outline:none;
+    transition:border-color 0.15s ease;
+}
+.profile-input:focus{border-color:#2563eb;background:#ffffff;box-shadow:0 0 0 3px rgba(37,99,235,0.1)}
+.profile-input:disabled{
+    background:transparent;border-color:transparent;
+    color:#0f172a;cursor:default;text-align:right;
+}
+
+.badge-perm{
+    display:inline-block;padding:3px 10px;
+    border-radius:20px;font-size:11px;font-weight:700;letter-spacing:0.5px;
+}
+.perm-yes{background:#dcfce7;color:#166534}
+.perm-no{background:#fee2e2;color:#991b1b}
+
+.btn-save{
+    margin-top:20px;
+    padding:11px 22px;
+    background:#2563eb;
+    color:#ffffff;
+    border:none;border-radius:8px;
+    font-size:14px;font-weight:600;
+    cursor:pointer;width:100%;
+    transition:background 0.15s ease;
+}
+.btn-save:hover{background:#1d4ed8}
+.btn-save:disabled{background:#e2e8f0;color:#94a3b8;cursor:not-allowed}
+
+/* ── Subject cards (marks & attendance) ── */
+.subjects-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+    gap:16px;
+}
+.subject-card{
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:10px;
+    padding:16px 20px;
+    transition:box-shadow 0.2s ease,border-color 0.2s ease;
+}
+.subject-card:hover{box-shadow:0 4px 12px rgba(0,0,0,0.06);border-color:#bfdbfe}
+
+.subject-code{
+    font-size:11px;font-weight:700;
+    color:#2563eb;letter-spacing:0.5px;
+    text-transform:uppercase;margin-bottom:4px;
+}
+.subject-name{
+    font-size:15px;font-weight:700;
+    color:#0f172a;margin-bottom:12px;
+}
+.subject-detail{
+    font-size:13px;color:#475569;
+    display:flex;justify-content:space-between;align-items:center;
+    margin-bottom:6px;
+}
+.subject-detail span{font-weight:600;color:#0f172a}
+
+/* Score / percentage bar */
+.bar-wrap{
+    background:#e2e8f0;border-radius:999px;
+    height:6px;margin-top:10px;overflow:hidden;
+}
+.bar-fill{height:100%;border-radius:999px;transition:width 0.5s ease}
+.bar-good{background:#16a34a}
+.bar-warn{background:#dc2626}
+.bar-med{background:#d97706}
+
+.score-pct{
+    font-size:18px;font-weight:700;margin-top:8px;
+}
+.score-good{color:#16a34a}
+.score-warn{color:#dc2626}
+.score-med{color:#d97706}
+
+.empty-state{
+    text-align:center;padding:60px 20px;
+    color:#94a3b8;font-size:15px;
+}
+
+.loading-state{
+    text-align:center;padding:40px;
+    color:#94a3b8;font-size:14px;
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+    <div class="header-brand">
+        <h1>ESEC SIMS</h1>
+        <span class="badge-role">STUDENT PORTAL</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:18px">
+        <span class="logged">Logged in as&nbsp;<strong id="headerName">Student</strong></span>
+        <button class="btn-logout" onclick="logout()">LOG OUT</button>
+    </div>
+</div>
+
+<!-- Welcome banner -->
+<div class="welcome-bar">
+    <h2>Welcome, <span id="userName">Student</span></h2>
+    <p>Student Information Management System — Academic Dashboard</p>
+</div>
+
+<!-- Metrics row -->
+<div class="metrics-row">
+    <div class="metric-card">
+        <div class="metric-label">Academic Performance</div>
+        <div id="statPerformance" class="metric-value">--%</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-label">Average Attendance</div>
+        <div id="statAttendance" class="metric-value">--%</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-label">Attendance &amp; Grade Alerts</div>
+        <div id="statAlerts" class="metric-value">0</div>
+    </div>
+</div>
+
+<!-- Tab bar -->
+<div class="tabs">
+    <button class="tab active" onclick="switchTab('profile',this)">👤 Student Profile</button>
+    <button class="tab"        onclick="switchTab('marks',  this)">📊 Continuous Assessment</button>
+    <button class="tab"        onclick="switchTab('attend', this)">📅 Course Attendance</button>
+</div>
+
+<!-- Content area -->
+<div class="content">
+
+    <!-- ── TAB 1: Student Profile ── -->
+    <section id="panel-profile" class="panel active">
+        <div class="card">
+            <div class="card-title">
+                Student Profile
+                <span id="permBadge" class="badge-perm perm-no">LOCKED BY STAFF</span>
+            </div>
+            <div id="studentData">
+                <div class="loading-state">Loading student information…</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── TAB 2: Continuous Assessment ── -->
+    <section id="panel-marks" class="panel">
+        <div class="card">
+            <div class="card-title">Continuous Assessment Marks</div>
+            <div id="marksData">
+                <div class="loading-state">Loading performance records…</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── TAB 3: Course Attendance ── -->
+    <section id="panel-attend" class="panel">
+        <div class="card">
+            <div class="card-title">Course Attendance Summary</div>
+            <div id="attendanceData">
+                <div class="loading-state">Loading attendance records…</div>
+            </div>
+        </div>
+    </section>
+
+</div><!-- /content -->
+
+<script>
+/* ── Session guard ── */
+const storedName = localStorage.getItem("sims_name");
+const role       = (localStorage.getItem("sims_role") || "").toLowerCase();
+const studentId  = localStorage.getItem("sims_id");
+
+if (!storedName || role !== "student") { window.location.href = "/"; }
+
+document.getElementById("userName").textContent   = storedName || "Student";
+document.getElementById("headerName").textContent = storedName || "Student";
+
+/* ── Tab switching ── */
+function switchTab(id, btn) {
+    document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+    document.querySelectorAll(".tab").forEach(t  => t.classList.remove("active"));
+    document.getElementById("panel-" + id).classList.add("active");
+    btn.classList.add("active");
+}
+
+/* ── Load dashboard data ── */
+async function loadDashboardData() {
+    if (!studentId) { showError("Student ID not found in session."); return; }
+
+    try {
+        const res  = await fetch("/api/dashboard?id=" + encodeURIComponent(studentId));
+        if (!res.ok) throw new Error("Server returned status " + res.status);
+
+        const data = await res.json();
+        if (!data.success) throw new Error(data.message || "Failed to load dashboard.");
+
+        // Metrics
+        if (data.stats) {
+            const perfVal = parseFloat(data.stats.avgPerformance || 0);
+            const attVal  = parseFloat(data.stats.avgAttendance  || 0);
+
+            const perf = document.getElementById("statPerformance");
+            perf.textContent  = data.stats.avgPerformance + "%";
+            perf.className    = "metric-value " + (perfVal >= 50 ? "good" : "warn");
+
+            const att  = document.getElementById("statAttendance");
+            att.textContent   = data.stats.avgAttendance + "%";
+            att.className     = "metric-value " + (attVal  >= 75 ? "good" : "warn");
+
+            const alrt = document.getElementById("statAlerts");
+            alrt.textContent  = data.stats.alerts;
+            alrt.className    = "metric-value " + (data.stats.alerts === 0 ? "good" : "warn");
+        }
+
+        renderProfile(data.student);
+        renderMarks(data.marks);
+        renderAttendance(data.attendance);
+
+    } catch (err) {
+        console.error("Dashboard error:", err);
+        showError("Unable to load data: " + err.message);
+    }
+}
+
+/* ── Render: Profile ── */
+function renderProfile(st) {
+    const canEdit = st.editPermission === true;
+
+    const permBadge = document.getElementById("permBadge");
+    permBadge.textContent = canEdit ? "EDIT ALLOWED" : "LOCKED BY STAFF";
+    permBadge.className   = "badge-perm " + (canEdit ? "perm-yes" : "perm-no");
+
+    document.getElementById("studentData").innerHTML = `
+        <div class="profile-grid">
+            <div style="padding-right:40px;border-right:1px solid #f1f5f9">
+                <p style="font-size:12px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin:0 0 12px">
+                    Protected Fields (Read-only)
+                </p>
+                <div class="data-row">
+                    <span class="data-label">Roll Number</span>
+                    <span class="data-value">${safe(st.rollNo)}</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Department</span>
+                    <span class="data-value">${safe(st.department)}</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Year</span>
+                    <span class="data-value">Year ${safe(st.year)}</span>
+                </div>
+                <div class="data-row" style="border-bottom:none">
+                    <span class="data-label">Batch</span>
+                    <span class="data-value">Batch ${safe(st.batch || "I")}</span>
+                </div>
+            </div>
+
+            <div style="padding-left:40px">
+                <p style="font-size:12px;font-weight:700;color:#64748b;letter-spacing:1px;text-transform:uppercase;margin:0 0 12px">
+                    Editable Fields ${canEdit ? "" : "(Locked by staff)"}
+                </p>
+                <div class="data-row">
+                    <span class="data-label">Full Name</span>
+                    <input id="profName"    class="profile-input" value="${safe(st.name)}"          ${canEdit ? "" : "disabled"}>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Registered Mobile</span>
+                    <input id="profMobile"  class="profile-input" value="${safe(st.mobile)}"        ${canEdit ? "" : "disabled"}>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">Email Address</span>
+                    <input id="profEmail"   class="profile-input" value="${safe(st.email || "")}"   ${canEdit ? "" : "disabled"}>
+                </div>
+                <div class="data-row" style="border-bottom:none">
+                    <span class="data-label">Address</span>
+                    <input id="profAddress" class="profile-input" value="${safe(st.address || "")}" ${canEdit ? "" : "disabled"}>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-save" ${canEdit ? "" : "disabled"} onclick="saveProfile('${safe(st.rollNo)}')">
+            ${canEdit ? "💾  Save Permitted Details" : "🔒  Profile Edit Locked by Staff"}
+        </button>
+    `;
+}
+
+/* ── Render: Marks ── */
+function renderMarks(marks) {
+    const cont = document.getElementById("marksData");
+    if (!marks || marks.length === 0) {
+        cont.innerHTML = '<div class="empty-state">No continuous assessment marks recorded yet.</div>';
+        return;
+    }
+
+    let html = '<div class="subjects-grid">';
+    marks.forEach(m => {
+        const pct  = parseFloat(m.performance || 0);
+        const cls  = pct >= 75 ? "score-good" : pct >= 50 ? "score-med" : "score-warn";
+        const bar  = pct >= 75 ? "bar-good"   : pct >= 50 ? "bar-med"   : "bar-warn";
+        const sac  = (m.total - m.cat1 - m.cat2).toFixed(1);
+
+        html += `
+            <div class="subject-card">
+                <div class="subject-code">${safe(m.code)}</div>
+                <div class="subject-name">${safe(m.name)}</div>
+                <div class="subject-detail">
+                    <span>CAT 1</span><span>${m.cat1}</span>
+                </div>
+                <div class="subject-detail">
+                    <span>CAT 2</span><span>${m.cat2}</span>
+                </div>
+                <div class="subject-detail">
+                    <span>SAC</span><span>${sac}</span>
+                </div>
+                <div class="bar-wrap">
+                    <div class="bar-fill ${bar}" style="width:${Math.min(pct,100)}%"></div>
+                </div>
+                <div class="score-pct ${cls}">${m.performance}%</div>
+            </div>
+        `;
+    });
+    html += '</div>';
+    cont.innerHTML = html;
+}
+
+/* ── Render: Attendance ── */
+function renderAttendance(att) {
+    const cont = document.getElementById("attendanceData");
+    if (!att || att.length === 0) {
+        cont.innerHTML = '<div class="empty-state">No attendance recorded yet.</div>';
+        return;
+    }
+
+    let html = '<div class="subjects-grid">';
+    att.forEach(item => {
+        const pct = parseFloat(item.percentage);
+        const cls = pct >= 75 ? "score-good" : pct >= 65 ? "score-med" : "score-warn";
+        const bar = pct >= 75 ? "bar-good"   : pct >= 65 ? "bar-med"   : "bar-warn";
+
+        html += `
+            <div class="subject-card">
+                <div class="subject-code">${safe(item.code)}</div>
+                <div class="subject-name">${safe(item.name)}</div>
+                <div class="subject-detail">
+                    <span>Present</span><span>${item.present}</span>
+                </div>
+                <div class="subject-detail">
+                    <span>Total Periods</span><span>${item.total}</span>
+                </div>
+                <div class="subject-detail">
+                    <span>Absent</span><span>${item.total - item.present}</span>
+                </div>
+                <div class="bar-wrap">
+                    <div class="bar-fill ${bar}" style="width:${Math.min(pct,100)}%"></div>
+                </div>
+                <div class="score-pct ${cls}">${item.percentage}%</div>
+            </div>
+        `;
+    });
+    html += '</div>';
+    cont.innerHTML = html;
+}
+
+/* ── Save profile ── */
+async function saveProfile(rollNo) {
+    const n = document.getElementById("profName").value.trim();
+    const m = document.getElementById("profMobile").value.trim();
+    const e = document.getElementById("profEmail").value.trim();
+    const a = document.getElementById("profAddress").value.trim();
+
+    if (!n || !m) { alert("Name and mobile are required."); return; }
+
+    try {
+        const res  = await fetch("/api/student/profile", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({rollNo, name: n, mobile: m, email: e, address: a})
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.message || "Update failed.");
+
+        alert("Profile successfully updated in MySQL!");
+        localStorage.setItem("sims_name", n);
+        document.getElementById("userName").textContent   = n;
+        document.getElementById("headerName").textContent = n;
+    } catch (err) {
+        alert("Error: " + err.message);
+    }
+}
+
+/* ── Helpers ── */
+function showError(msg) {
+    document.getElementById("studentData").innerHTML    = `<div style="color:#dc2626;padding:20px">${msg}</div>`;
+    document.getElementById("marksData").innerHTML      = `<div style="color:#dc2626;padding:20px">${msg}</div>`;
+    document.getElementById("attendanceData").innerHTML = `<div style="color:#dc2626;padding:20px">${msg}</div>`;
+}
+
+function safe(v) {
+    return String(v ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+function logout() {
+    ["sims_name","sims_role","sims_id"].forEach(k => localStorage.removeItem(k));
+    window.location.href = "/";
+}
+
+loadDashboardData();
+</script>
+</body>
+</html>

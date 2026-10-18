@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ESEC SIMS - Staff Dashboard</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+    margin:0;
+    min-height:100vh;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:#f4f6f9;
+    color:#1e293b;
+}
+.header{
+    height:64px;
+    background:#ffffff;
+    border-bottom:1px solid #e2e8f0;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 24px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.03);
+}
+.header-brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+.header-brand h1{
+    margin:0;
+    font-size:22px;
+    font-weight:700;
+    color:#0f172a;
+}
+.badge-role{
+    background:#e0e7ff;
+    color:#3730a3;
+    font-size:11px;
+    font-weight:700;
+    padding:3px 8px;
+    border-radius:12px;
+    letter-spacing:0.5px;
+}
+.logged{
+    font-size:14px;
+    color:#475569;
+}
+.logged strong{color:#0f172a}
+.tabs{
+    background:#ffffff;
+    border-bottom:1px solid #e2e8f0;
+    display:flex;
+    padding:0 20px;
+    gap:6px;
+}
+.tab{
+    border:none;
+    border-bottom:3px solid transparent;
+    background:transparent;
+    padding:12px 18px;
+    cursor:pointer;
+    font-size:14px;
+    font-weight:600;
+    color:#64748b;
+    transition:all 0.2s ease;
+}
+.tab:hover{color:#2563eb}
+.tab.active{
+    color:#2563eb;
+    border-bottom-color:#2563eb;
+}
+.content{
+    max-width:1400px;
+    margin:24px auto 90px;
+    padding:0 24px;
+}
+.panel{display:none}
+.panel.active{display:block}
+
+.card{
+    background:#ffffff;
+    border:1px solid #e2e8f0;
+    border-radius:10px;
+    padding:22px;
+    margin-bottom:20px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.02);
+}
+.card-title{
+    margin:0 0 16px 0;
+    font-size:17px;
+    font-weight:700;
+    color:#0f172a;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:14px;
+    align-items:end;
+}
+.field label{
+    display:block;
+    font-size:12px;
+    font-weight:600;
+    color:#475569;
+    margin-bottom:6px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+}
+.field input,.field select{
+    width:100%;
+    height:42px;
+    border:1px solid #cbd5e1;
+    border-radius:6px;
+    padding:8px 12px;
+    font-size:14px;
+    background:#ffffff;
+    color:#0f172a;
+    outline:none;
+    transition:border-color 0.15s ease;
+}
+.field input:focus,.field select:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 0 3px rgba(37,99,235,0.1);
+}
+
+.btn{
+    height:42px;
+    border:none;
+    border-radius:6px;
+    background:#2563eb;
+    color:white;
+    font-size:14px;
+    font-weight:600;
+    padding:0 18px;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    transition:background-color 0.15s ease;
+}
+.btn:hover{background:#1d4ed8}
+.btn-secondary{
+    background:#f1f5f9;
+    color:#334155;
+    border:1px solid #cbd5e1;
+}
+.btn-secondary:hover{background:#e2e8f0}
+.btn-danger{background:#dc2626}
+.btn-danger:hover{background:#b91c1c}
+.btn-sm{
+    height:30px;
+    padding:0 10px;
+    font-size:12px;
+}
+
+.table-toolbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    margin-bottom:14px;
+    flex-wrap:wrap;
+}
+.search-box{
+    position:relative;
+    min-width:280px;
+}
+.search-box input{
+    width:100%;
+    height:40px;
+    border:1px solid #cbd5e1;
+    border-radius:6px;
+    padding:8px 14px 8px 36px;
+    font-size:13px;
+    outline:none;
+}
+.search-box input:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 0 3px rgba(37,99,235,0.1);
+}
+.search-icon{
+    position:absolute;
+    left:12px;
+    top:11px;
+    color:#94a3b8;
+    font-size:14px;
+}
+
+.table-wrap{
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    overflow:auto;
+    background:#ffffff;
+}
+table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+}
+th,td{
+    border-bottom:1px solid #e2e8f0;
+    padding:11px 14px;
+    text-align:left;
+    white-space:nowrap;
+}
+th{
+    background:#f8fafc;
+    color:#475569;
+    font-weight:600;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+}
+tr:hover td{background:#f8fafc}
+.status-pill{
+    display:inline-block;
+    padding:3px 8px;
+    border-radius:12px;
+    font-size:11px;
+    font-weight:700;
+}
+.pill-yes{background:#dcfce7;color:#166534}
+.pill-no{background:#fee2e2;color:#991b1b}
+.pill-neutral{background:#f1f5f9;color:#475569}
+
+.empty{
+    text-align:center;
+    padding:40px 20px;
+    color:#94a3b8;
+    font-size:14px;
+}
+.notice{
+    margin:12px 0 18px;
+    padding:12px 16px;
+    background:#eff6ff;
+    border-left:4px solid #2563eb;
+    border-radius:0 6px 6px 0;
+    font-size:13px;
+    color:#1e40af;
+}
+
+.bottom{
+    position:fixed;
+    left:0;right:0;bottom:0;
+    height:60px;
+    background:#ffffff;
+    border-top:1px solid #e2e8f0;
+    display:flex;
+    justify-content:flex-end;
+    align-items:center;
+    padding:0 24px;
+    box-shadow:0 -1px 3px rgba(0,0,0,0.03);
+    z-index:50;
+}
+
+/* Modal styles */
+.modal-overlay{
+    display:none;
+    position:fixed;
+    top:0;left:0;right:0;bottom:0;
+    background:rgba(15,23,42,0.5);
+    backdrop-filter:blur(2px);
+    z-index:100;
+    align-items:center;
+    justify-content:center;
+}
+.modal-overlay.open{display:flex}
+.modal-box{
+    background:white;
+    width:92%;
+    max-width:580px;
+    border-radius:10px;
+    padding:24px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.15);
+}
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+}
+.modal-header h3{margin:0;font-size:18px;color:#0f172a}
+.modal-close{
+    background:none;border:none;font-size:20px;cursor:pointer;color:#94a3b8;
+}
+.modal-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:20px;
+}
+
+/* Alert toast */
+.toast{
+    position:fixed;
+    top:20px;right:20px;
+    padding:12px 20px;
+    border-radius:8px;
+    font-size:14px;
+    font-weight:600;
+    color:white;
+    box-shadow:0 4px 12px rgba(0,0,0,0.15);
+    display:none;
+    z-index:200;
+    animation:fadeIn 0.2s ease;
+}
+.toast.success{background:#16a34a;display:block}
+.toast.error{background:#dc2626;display:block}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+    <div class="header-brand">
+        <h1>ESEC SIMS</h1>
+        <span class="badge-role">STAFF PORTAL</span>
+    </div>
+    <div class="logged">
+        Logged in: <strong id="staffName">CSE Staff</strong>
+        (<span id="staffId">STF001</span>)
+    </div>
+</header>
+
+<nav class="tabs">
+    <button class="tab active" data-panel="students">Students Management</button>
+    <button class="tab" data-panel="subjects">Subjects</button>
+    <button class="tab" data-panel="marks">Marks Entry</button>
+    <button class="tab" data-panel="attendance">Period Attendance</button>
+    <button class="tab" data-panel="permission">Profile Permission</button>
+</nav>
+
+<div id="toast" class="toast"></div>
+
+<main class="content">
+
+<!-- ======================================================== -->
+<!-- TAB 1: STUDENTS MANAGEMENT -->
+<!-- ======================================================== -->
+<section id="students" class="panel active">
+
+    <!-- Add Student Card -->
+    <div class="card">
+        <div class="card-title">
+            <span>Add New Student</span>
+        </div>
+        <form id="addStudentForm" onsubmit="event.preventDefault(); addStudent();">
+            <div class="form-grid">
+                <div class="field">
+                    <label>Roll Number *</label>
+                    <input id="studentRoll" placeholder="e.g. ES25CS22" required>
+                </div>
+                <div class="field">
+                    <label>Full Name *</label>
+                    <input id="studentName" placeholder="e.g. John Doe" required>
+                </div>
+                <div class="field">
+                    <label>Department</label>
+                    <input id="studentDept" value="CSE-A" required>
+                </div>
+                <div class="field">
+                    <label>Year</label>
+                    <input id="studentYear" type="number" min="1" max="4" value="2" required>
+                </div>
+                <div class="field">
+                    <label>Batch</label>
+                    <select id="studentBatch">
+                        <option value="I">Batch I</option>
+                        <option value="II">Batch II</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Registered Mobile</label>
+                    <input id="studentMobile" placeholder="10-digit mobile" required>
+                </div>
+                <div class="field">
+                    <label>Email</label>
+                    <input id="studentEmail" type="email" placeholder="student@example.com">
+                </div>
+                <div class="field">
+                    <label>Address</label>
+                    <input id="studentAddress" placeholder="City / Address">
+                </div>
+                <div>
+                    <button type="submit" class="btn" style="width:100%">+ Add Student</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Student List Card -->
+    <div class="card">
+        <div class="table-toolbar">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input id="searchStudent" placeholder="Search by roll no, name, dept..." oninput="filterStudents()">
+            </div>
+            <div style="display:flex;gap:8px">
+                <button class="btn btn-secondary" onclick="loadStudents()">↻ Refresh List</button>
+            </div>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Roll No</th>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Year</th>
+                        <th>Batch</th>
+                        <th>Mobile</th>
+                        <th>Email</th>
+                        <th>Edit Allowed</th>
+                        <th style="text-align:right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="studentsBody">
+                    <tr><td colspan="9" class="empty">Loading students...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- ======================================================== -->
+<!-- TAB 2: SUBJECTS -->
+<!-- ======================================================== -->
+<section id="subjects" class="panel">
+    <div class="card">
+        <div class="card-title">Add New Subject</div>
+        <form onsubmit="event.preventDefault(); addSubject();">
+            <div class="form-grid">
+                <div class="field">
+                    <label>Semester</label>
+                    <input id="subSemester" type="number" value="3" min="1" max="8" required>
+                </div>
+                <div class="field">
+                    <label>Subject Code</label>
+                    <input id="subCode" placeholder="e.g. 23CS301" required>
+                </div>
+                <div class="field">
+                    <label>Subject Name</label>
+                    <input id="subName" placeholder="e.g. Operating Systems" required>
+                </div>
+                <div class="field">
+                    <label>Type</label>
+                    <select id="subType">
+                        <option value="Theory">Theory</option>
+                        <option value="Practical">Practical</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Credits</label>
+                    <input id="subCredits" type="number" step="0.5" value="3.0" required>
+                </div>
+                <div>
+                    <button type="submit" class="btn" style="width:100%">+ Add Subject</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="card">
+        <div class="table-toolbar">
+            <h3 style="margin:0;font-size:16px">Curriculum Subjects</h3>
+            <button class="btn btn-secondary" onclick="loadSubjects()">↻ Refresh Subjects</button>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr><th>Semester</th><th>Code</th><th>Subject Name</th><th>Type</th><th>Credits</th></tr>
+                </thead>
+                <tbody id="subjectsBody">
+                    <tr><td colspan="5" class="empty">Click Refresh to load subjects.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- ======================================================== -->
+<!-- TAB 3: MARKS ENTRY -->
+<!-- ======================================================== -->
+<section id="marks" class="panel">
+    <div class="card">
+        <div class="card-title">Continuous Assessment Marks Entry</div>
+        <div class="notice">Staff can enter and update CAT (0-100) and SAC (0-20) continuous assessment marks. Changes persist directly into MySQL.</div>
+        
+        <div class="form-grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin-bottom:16px">
+            <div class="field">
+                <label>Student Roll No</label>
+                <input id="markRoll" placeholder="e.g. ES25CS21">
+            </div>
+            <div class="field">
+                <label>Subject Code</label>
+                <select id="markCodeSelect">
+                    <option value="">Select subject...</option>
+                </select>
+            </div>
+            <div>
+                <button class="btn btn-secondary" style="width:100%" onclick="loadStudentMarks()">Load Existing Marks</button>
+            </div>
+        </div>
+
+        <div class="form-grid" style="grid-template-columns:repeat(auto-fit,minmax(120px,1fr));background:#f8fafc;padding:16px;border-radius:8px;border:1px solid #e2e8f0">
+            <div class="field">
+                <label>CAT 1 (/100)</label>
+                <input id="cat1" type="number" step="0.01" min="0" max="100" placeholder="0">
+            </div>
+            <div class="field">
+                <label>CAT 2 (/100)</label>
+                <input id="cat2" type="number" step="0.01" min="0" max="100" placeholder="0">
+            </div>
+            <div class="field">
+                <label>SAC 1 (/20)</label>
+                <input id="sac1" type="number" step="0.01" min="0" max="20" placeholder="0">
+            </div>
+            <div class="field">
+                <label>SAC 2 (/20)</label>
+                <input id="sac2" type="number" step="0.01" min="0" max="20" placeholder="0">
+            </div>
+            <div class="field">
+                <label>SAC 3 (/20)</label>
+                <input id="sac3" type="number" step="0.01" min="0" max="20" placeholder="0">
+            </div>
+            <div class="field">
+                <label>SAC 4 (/20)</label>
+                <input id="sac4" type="number" step="0.01" min="0" max="20" placeholder="0">
+            </div>
+            <div class="field">
+                <label>SAC 5 (/20)</label>
+                <input id="sac5" type="number" step="0.01" min="0" max="20" placeholder="0">
+            </div>
+            <div>
+                <button class="btn" style="width:100%" onclick="saveMarks()">💾 Save Marks</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Student Academic Marks Overview</div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr><th>Subject Code</th><th>Subject Name</th><th>Type</th><th>CAT 1</th><th>CAT 2</th><th>SAC 1-5</th><th>Total</th></tr>
+                </thead>
+                <tbody id="marksOverviewBody">
+                    <tr><td colspan="7" class="empty">Enter roll number above and click 'Load Existing Marks'.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- ======================================================== -->
+<!-- TAB 4: PERIOD-WISE ATTENDANCE -->
+<!-- ======================================================== -->
+<section id="attendance" class="panel">
+    <div class="card">
+        <div class="card-title">Timetable-Validated Period Attendance</div>
+        <div class="notice">Attendance is validated against the official semester timetable. Only scheduled class periods can be marked as PRESENT, ABSENT, or OD.</div>
+
+        <div class="form-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-bottom:16px">
+            <div class="field">
+                <label>Attendance Date</label>
+                <input id="attDate" type="date">
+            </div>
+            <div class="field">
+                <label>Subject</label>
+                <select id="attCodeSelect">
+                    <option value="">Select subject...</option>
+                </select>
+            </div>
+            <div>
+                <button class="btn" style="width:100%" onclick="loadAttendanceSheet()">Load Timetable Sheet</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="table-toolbar">
+            <h3 id="attSheetTitle" style="margin:0;font-size:16px">Daily Attendance Sheet</h3>
+            <span id="attSlotBadge" class="status-pill pill-neutral">Select date & subject</span>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Roll No</th>
+                        <th>Name</th>
+                        <th>Batch</th>
+                        <th>P1</th><th>P2</th><th>P3</th><th>P4</th><th>P5</th><th>P6</th><th>P7</th>
+                    </tr>
+                </thead>
+                <tbody id="attendanceSheetBody">
+                    <tr><td colspan="10" class="empty">Select date and subject above, then click 'Load Timetable Sheet'.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- ======================================================== -->
+<!-- TAB 5: PROFILE PERMISSION -->
+<!-- ======================================================== -->
+<section id="permission" class="panel">
+    <div class="card">
+        <div class="card-title">Student Profile Edit Control</div>
+        <div class="notice">
+            Staff controls student self-service edit rights:<br>
+            • <strong>ALLOW</strong>: Student can edit personal details (Name, Mobile, Email, Address) in student portal.<br>
+            • <strong>NOT ALLOW</strong>: Student profile remains strictly read-only.
+        </div>
+
+        <div class="form-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+            <div class="field">
+                <label>Student Roll No</label>
+                <input id="permissionRoll" placeholder="e.g. ES25CS21">
+            </div>
+            <div>
+                <button class="btn btn-secondary" style="width:100%" onclick="checkPermission()">Check Current Status</button>
+            </div>
+            <div class="field">
+                <label>Action</label>
+                <select id="permissionValue">
+                    <option value="true">ALLOW EDIT</option>
+                    <option value="false">NOT ALLOW (LOCKED)</option>
+                </select>
+            </div>
+            <div>
+                <button class="btn" style="width:100%" onclick="savePermission()">Save Permission</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+</main>
+
+<!-- Edit Student Modal -->
+<div id="editStudentModal" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3>Edit Student Details</h3>
+            <button class="modal-close" onclick="closeEditModal()">×</button>
+        </div>
+        <form onsubmit="event.preventDefault(); submitEditStudent();">
+            <div class="form-grid" style="grid-template-columns:1fr 1fr;gap:12px">
+                <div class="field">
+                    <label>Roll Number (Protected)</label>
+                    <input id="editRoll" readonly style="background:#f1f5f9;cursor:not-allowed">
+                </div>
+                <div class="field">
+                    <label>Full Name</label>
+                    <input id="editName" required>
+                </div>
+                <div class="field">
+                    <label>Department</label>
+                    <input id="editDept" required>
+                </div>
+                <div class="field">
+                    <label>Year</label>
+                    <input id="editYear" type="number" min="1" max="4" required>
+                </div>
+                <div class="field">
+                    <label>Batch</label>
+                    <select id="editBatch">
+                        <option value="I">Batch I</option>
+                        <option value="II">Batch II</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Mobile</label>
+                    <input id="editMobile" required>
+                </div>
+                <div class="field" style="grid-column:span 2">
+                    <label>Email</label>
+                    <input id="editEmail" type="email">
+                </div>
+                <div class="field" style="grid-column:span 2">
+                    <label>Address</label>
+                    <input id="editAddress">
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+                <button type="submit" class="btn">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<footer class="bottom">
+    <button class="btn btn-secondary" onclick="logout()">Log Out</button>
+</footer>
+
+<script>
+let allStudents = [];
+let allSubjects = [];
+
+// Initialize Staff Identity
+const staffName = localStorage.getItem("sims_name") || "CSE Staff";
+const staffId = localStorage.getItem("sims_id") || "STF001";
+document.getElementById("staffName").textContent = staffName;
+document.getElementById("staffId").textContent = staffId;
+
+// Set default attendance date to today
+document.getElementById("attDate").value = new Date().toISOString().split("T")[0];
+
+// Tab Switching
+document.querySelectorAll(".tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+        document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+        tab.classList.add("active");
+        document.getElementById(tab.dataset.panel).classList.add("active");
+
+        if (tab.dataset.panel === "students") loadStudents();
+        if (tab.dataset.panel === "subjects") loadSubjects();
+        if (tab.dataset.panel === "marks" || tab.dataset.panel === "attendance") loadSubjectsDropdowns();
+    });
+});
+
+// Toast Notifications
+function toast(message, type="success"){
+    const t = document.getElementById("toast");
+    t.textContent = message;
+    t.className = "toast " + type;
+    setTimeout(() => { t.className = "toast"; }, 3500);
+}
+
+// ========================================================
+// STUDENTS MANAGEMENT
+// ========================================================
+
+async function loadStudents(){
+    const body = document.getElementById("studentsBody");
+    body.innerHTML = '<tr><td colspan="9" class="empty">Loading student records from MySQL...</td></tr>';
+
+    try{
+        const res = await fetch("/api/students");
+        const data = await res.json();
+        if(!data.success) throw new Error(data.message || "Failed to load students.");
+
+        allStudents = data.students || [];
+        renderStudentsTable(allStudents);
+    }catch(err){
+        body.innerHTML = `<tr><td colspan="9" class="empty" style="color:#dc2626">${safe(err.message)}</td></tr>`;
+    }
+}
+
+function renderStudentsTable(list){
+    const body = document.getElementById("studentsBody");
+    body.innerHTML = "";
+
+    if(!list || list.length === 0){
+        body.innerHTML = '<tr><td colspan="9" class="empty">No student records found.</td></tr>';
+        return;
+    }
+
+    list.forEach(s => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td><strong>${safe(s.rollNo)}</strong></td>
+            <td>${safe(s.name)}</td>
+            <td>${safe(s.department)}</td>
+            <td>${safe(s.year)}</td>
+            <td>${safe(s.batch || "I")}</td>
+            <td>${safe(s.mobile)}</td>
+            <td>${safe(s.email || "—")}</td>
+            <td>
+                <span class="status-pill ${s.editPermission ? 'pill-yes' : 'pill-no'}">
+                    ${s.editPermission ? 'ENABLED' : 'LOCKED'}
+                </span>
+            </td>
+            <td style="text-align:right">
+                <button class="btn btn-secondary btn-sm" onclick="openEditModal('${safe(s.rollNo)}')">Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteStudent('${safe(s.rollNo)}')">Delete</button>
+            </td>
+        `;
+        body.appendChild(tr);
+    });
+}
+
+function filterStudents(){
+    const q = document.getElementById("searchStudent").value.trim().toLowerCase();
+    if(!q){
+        renderStudentsTable(allStudents);
+        return;
+    }
+    const filtered = allStudents.filter(s => 
+        (s.rollNo && s.rollNo.toLowerCase().includes(q)) ||
+        (s.name && s.name.toLowerCase().includes(q)) ||
+        (s.department && s.department.toLowerCase().includes(q))
+    );
+    renderStudentsTable(filtered);
+}
+
+async function addStudent(){
+    const rollNo = document.getElementById("studentRoll").value.trim().toUpperCase();
+    const name = document.getElementById("studentName").value.trim();
+    const dept = document.getElementById("studentDept").value.trim();
+    const year = document.getElementById("studentYear").value.trim();
+    const batch = document.getElementById("studentBatch").value;
+    const mobile = document.getElementById("studentMobile").value.trim();
+    const email = document.getElementById("studentEmail").value.trim();
+    const address = document.getElementById("studentAddress").value.trim();
+
+    if(!rollNo || !name || !mobile){
+        alert("Please fill in Roll Number, Full Name, and Registered Mobile.");
+        return;
+    }
+
+    try{
+        const res = await fetch("/api/students", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({rollNo, name, department: dept, year, batch, mobile, email, address})
+        });
+        const data = await res.json();
+        if(!data.success) throw new Error(data.message || "Could not add student.");
+
+        toast(`Student ${rollNo} added successfully!`);
+        document.getElementById("addStudentForm").reset();
+        document.getElementById("studentDept").value = "CSE-A";
+        document.getElementById("studentYear").value = "2";
+        loadStudents();
+    }catch(err){
+        alert("Error: " + err.message);
+    }
+}
+
+function openEditModal(rollNo){
+    const s = allStudents.find(x => x.rollNo === rollNo);
+    if(!s) return;
+
+    document.getElementById("editRoll").value = s.rollNo;
+    document.getElementById("editName").value = s.name;
+    document.getElementById("editDept").value = s.department;
+    document.getElementById("editYear").value = s.year;
+    document.getElementById("editBatch").value = s.batch || "I";
+    document.getElementById("editMobile").value = s.mobile;
+    document.getElementById("editEmail").value = s.email || "";
+    document.getElementById("editAddress").value = s.address || "";
+
+    document.getElementById("editStudentModal").classList.add("open");
+}
+
+function closeEditModal(){
+    document.getElementById("editStudentModal").classList.remove("open");
+}
+
+async function submitEditStudent(){
+    const rollNo = document.getElementById("editRoll").value;
+    const name = document.getElementById("editName").value.trim();
+    const dept = document.getElementById("editDept").value.trim();
+    const year = document.getElementById("editYear").value.trim();
+    const batch = document.getElementById("editBatch").value;
+    const mobile = document.getElementById("editMobile").value.trim();
+    const email = document.getElementById("editEmail").value.trim();
+    const address = document.getElementById("editAddress").value.trim();
+
+    try{
+        const res = await fetch("/api/students", {
+            method: "PUT",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({rollNo, name, department: dept, year, batch, mobile, email, address})
+        });
+        const data = await res.json();
+        if(!data.success) throw new Error(data.message || "Failed to update student.");
+
+        toast(`Student ${rollNo} updated successfully!`);
+        closeEditModal();
+        loadStudents();
+    }catch(err){
+        alert("Error: " + err.message);
+    }
+}
+
+async function deleteStudent(rollNo){
+    if(!confirm(`Are you sure you want to delete student ${rollNo}?\nThis action cannot be undone.`)){
+        return;
+    }
+
+    try{
+        const res = await fetch(`/api/students?rollNo=${encodeURIComponent(rollNo)}`, {
+            method: "DELETE"
+        });
+        const data = await res.json();
+        if(!data.success) throw new Error(data.message || "Failed to delete student.");
+
+        toast(`Student ${rollNo} deleted from database.`);
+        loadStudents();
+    }catch(err){
+        alert("Error: " + err.message);
+    }
+}
+
+// ========================================================
+// SUBJECTS MANAGEMENT
+// ========================================================
+
+async function loadSubjects(){
+    const body = document.getElementById("subjectsBody");
+    body.innerHTML = '<tr><td colspan="5" class="empty">Loading subjects...</td></tr>';
+
+    try{
+        const res = await fetch("/api/subjects");
+        const data = await res.json();
+        if(!data.success) throw new Error(data.message || "Failed to load subjects.");
+
+        allSubjects = data.subjects || [];
+        body.innerHTML = "";
+
+        if(allSubjects.length === 0){
+            body.innerHTML = '<tr><td colspan="5" class="empty">No subjects found.</td></tr>';
+            return;
+        }
+
+        allSubjects.forEach(s => {
+            body.insertAdjacentHTML("beforeend", `
+                <tr>
+                    <td>Sem ${safe(s.semester)}</td>
+                    <td><strong>${safe(s.code)}</strong></td>
+                    <td>${safe(s.name)}</td>
+                    <td>${safe(s.type)}</td>
+                    <td>${safe(s.credits)}</td>
+                </tr>
+            `);
+        });
+    }catch(err){
+        body.innerHTML = `<tr><td colspan="5" class="empty" style="color:#dc2626">${safe(err.message)}</td></tr>`;
+    }
+}
+
+async function addSubject(){
+    const sem = document.getElementById("subSemester").value.trim();
+    const code = document.getElementById("subCode").value.trim().toUpperCase();
+    const name = document.getElementById("subName").value.trim();
+    const type = document.getElementById("subType").value;
+    const credits = document.getElementById("subCredits").value.trim();
+
+    try{
+        const res = await fetch("/api/subjects", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({semester: sem, code, name, type, credits})
+        });
+        const data = await res.json();
+        if(!data.success) throw new Error(data.message || "Failed to add subject.");
+
+        toast(`Subject ${code} added successfully!`);
+        document.getElementById("subCode").value = "";
+        document.getElementById("subName").value = "";
+        loadSubjects();
+        loadSubjectsDropdowns();
+    }catch(err){
+        alert("Error: " + err.message);
+    }
+}
+
+async function loadSubjectsDropdowns(){
+    try{
+        const res = await fetch("/api/subjects");
+        const data = await res.json();
+        if(data.success && data.subjects){
+            allSubjects = data.subjects;
+            const markSelect = document.getElementById("markCodeSelect");
+            const attSelect = document.getElementById("attCodeSelect");
+
+            markSelect.innerHTML = '<option value="">Select subject...</option>';
+            attSelect.innerHTML = '<option value="">Select subject...</option>';
+
+            allSubjects.forEach(s => {
+                const opt = `<option value="${s.code}">${s.code} - ${s.name}</option>`;
+                markSelect.insertAdjacentHTML("beforeend", opt);
+                attSelect.insertAdjacentHTML("beforeend", opt);
+            });
+        }
+    }catch(ignored){}
+}
+
+// ========================================================
+// MARKS MANAGEMENT
+// ========================================================
+
+async function loadStudentMarks(){
+    const rollNo = document.getElementById("markRoll").value.trim().toUpperCase();
+    const code = document.getElementById("markCodeSelect").value.trim().toUpperCase();
+
+    if(!rollNo){
+        alert("Please enter student roll number.");
+        return;
+    }
+
+    try{
+        const res = await fetch(`/api/marks?rollNo=${encodeURIComponent(rollNo)}&code=${encodeURIComponent(code)}`);
+        const data = await res.json();
+        if(!data.success) throw new Error(data.message || "Failed to load marks.");
+
+        const body = document.getElementById("marksOverviewBody");
+        body.innerHTML = "";
+
+        if(!data.marks || data.marks.length === 0){
+            body.innerHTML = '<tr><td colspan="7" class="empty">No marks recorded yet for this student.</td></tr>';
+            return;
+        }
+
+        data.marks.forEach(m => {
+            // Populate inputs if this subject matches selection
+            if(m.code === code){
+                document.getElementById("cat1").value = m.cat1 || "";
+                document.getElementById("cat2").value = m.cat2 || "";
+                document.getElementById("sac1").value = m.sac1 || "";
+                document.getElementById("sac2").value = m.sac2 || "";
+                document.getElementById("sac3").value = m.sac3 || "";
+                document.getElementById("sac4").value = m.sac4 || "";
+                document.getElementById("sac5").value = m.sac5 || "";
+            }
+
+            body.insertAdjacentHTML("beforeend", `
+                <tr>
+                    <td><strong>${safe(m.code)}</strong></td>
+                    <td>${safe(m.name)}</td>
+                    <td>${safe(m.type)}</td>
+                    <td>${safe(m.cat1)}</td>
+                    <td>${safe(m.cat2)}</td>
+                    <td>${m.sac1}+${m.sac2}+${m.sac3}+${m.sac4}+${m.sac5}</td>
+                    <td><strong>${safe(m.total)}</strong></td>
+                </tr>
+            `);
+        });
+
+        toast("Marks loaded.");
+    }catch(err){
+        alert("Error: " + err.message);
+    }
+}
+
+async function saveMarks(){
+    const rollNo = document.getElementById("markRoll").value.trim().toUpperCase();
+    const code = document.getElementById("markCodeSelect").value.trim().toUpperCase();
+
+    if(!rollNo || !code){
+        alert("Please specify student roll number and subject code.");
+        return;
+    }
+
+    const payload = {
+        rollNo,
+        code,
+        cat1: document.getElementById("cat1").value || 0,
+        cat2: document.getElementById("cat2").value || 0,
+        sac1: document.getElementById("sac1").value || 0,
+        sac2: document.getElementById("sac2").value || 0,
+        sac3: document.getElementById("sac3").value || 0,
+        sac4: document.getElementById("sac4").value || 0,
+        sac5: document.getElementById("sac5").value || 0
+    };
+
+    try{
+        const res = await fetch("/api/marks", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if(!data.success) throw new Error(data.message || "Failed to save marks.");
+
+        toast(`Marks saved for ${rollNo} in ${code}! Total: ${data.total}`);
+        loadStudentMarks();
+    }catch(err){
+        alert("Error: " + err.message);
+    }
+}
+
+// ========================================================
+// ATTENDANCE MANAGEMENT
+// ========================================================
+
+async function loadAttendanceSheet(){
+    const date = document.getElementById("attDate").value;
+    const code = document.getElementById("attCodeSelect").value;
+
+    if(!date || !code){
+        alert("Please select both Date and Subject.");
+        return;
+    }
+
+    const body = document.getElementById("attendanceSheetBody");
+    body.innerHTML = '<tr><td colspan="10" class="empty">Validating timetable and loading students...</td></tr>';
+
+    try{
+        const res = await fetch(`/api/attendance?date=${encodeURIComponent(date)}&code=${encodeURIComponent(code)}`);
+        const data = await res.json();
+        if(!data.success) throw new Error(data.message || "Failed to load attendance.");
+
+        const badge = document.getElementById("attSlotBadge");
+        if(data.hasSlots){
+            badge.className = "status-pill pill-yes";
+            badge.textContent = `TIMETABLE: ${data.day} (PERIODS: ${data.scheduledPeriods.join(", ")})`;
+        }else{
+            badge.className = "status-pill pill-no";
+            badge.textContent = `NO TIMETABLE SLOT ON ${data.day}`;
+        }
+
+        body.innerHTML = "";
+        if(!data.students || data.students.length === 0){
+            body.innerHTML = '<tr><td colspan="10" class="empty">No students found.</td></tr>';
+            return;
+        }
+
+        data.students.forEach(st => {
+            const tr = document.createElement("tr");
+            let periodsHTML = "";
+
+            for(let p = 1; p <= 7; p++){
+                const slot = st.periods[p];
+                if(slot.scheduled){
+                    periodsHTML += `
+                        <td>
+                            <select onchange="updatePeriodAttendance('${st.rollNo}', '${code}', '${date}', ${p}, this.value)" style="padding:3px;font-size:12px;border-radius:4px;border:1px solid #cbd5e1">
+                                <option value="PRESENT" ${slot.status==='PRESENT'?'selected':''}>PRESENT</option>
+                                <option value="ABSENT" ${slot.status==='ABSENT'?'selected':''}>ABSENT</option>
+                                <option value="OD" ${slot.status==='OD'?'selected':''}>OD</option>
+                            </select>
+                        </td>
+                    `;
+                }else{
+                    periodsHTML += `<td style="color:#94a3b8;text-align:center">—</td>`;
+                }
+            }
+
+            tr.innerHTML = `
+                <td><strong>${safe(st.rollNo)}</strong></td>
+                <td>${safe(st.name)}</td>
+                <td>${safe(st.batch)}</td>
+                ${periodsHTML}
+            `;
+            body.appendChild(tr);
+        });
+
+    }catch(err){
+        body.innerHTML = `<tr><td colspan="10" class="empty" style="color:#dc2626">${safe(err.message)}</td></tr>`;
+    }
+}
+
+async function updatePeriodAttendance(rollNo, code, date, period, status){
+    try{
+        const res = await fetch("/api/attendance", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({rollNo, code, date, period, status})
+        });
+        const data = await res.json();
+        if(!data.success) throw new Error(data.message);
+        toast(`Attendance updated: ${rollNo} P${period} -> ${status}`);
+    }catch(err){
+        alert("Failed to save attendance: " + err.message);
+    }
+}
+
+// ========================================================
+// PROFILE PERMISSION
+// ========================================================
+
+async function checkPermission(){
+    const rollNo = document.getElementById("permissionRoll").value.trim().toUpperCase();
+    if(!rollNo){
+        alert("Enter roll number.");
+        return;
+    }
+
+    try{
+        const res = await fetch(`/api/profile-permission?rollNo=${encodeURIComponent(rollNo)}`);
+        const data = await res.json();
+        if(!data.success) throw new Error(data.message || "Student not found.");
+
+        document.getElementById("permissionValue").value = data.editPermission ? "true" : "false";
+        toast(`Current Status for ${rollNo}: ${data.editPermission ? 'ALLOWED' : 'LOCKED'}`);
+    }catch(err){
+        alert(err.message);
+    }
+}
+
+async function savePermission(){
+    const rollNo = document.getElementById("permissionRoll").value.trim().toUpperCase();
+    const permission = document.getElementById("permissionValue").value;
+
+    if(!rollNo){
+        alert("Enter roll number.");
+        return;
+    }
+
+    try{
+        const res = await fetch("/api/profile-permission", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({rollNo, permission})
+        });
+        const data = await res.json();
+        if(!data.success) throw new Error(data.message || "Failed to update permission.");
+
+        toast(`Profile permission updated for ${rollNo}!`);
+        loadStudents();
+    }catch(err){
+        alert(err.message);
+    }
+}
+
+// ========================================================
+// HELPERS
+// ========================================================
+
+function safe(v){
+    return String(v ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+}
+
+function logout(){
+    localStorage.removeItem("sims_name");
+    localStorage.removeItem("sims_role");
+    localStorage.removeItem("sims_id");
+    window.location.href = "/";
+}
+
+// Initial Boot
+loadStudents();
+loadSubjectsDropdowns();
+</script>
+
+</body>
+</html>
